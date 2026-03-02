@@ -4,6 +4,7 @@ import './globals.css'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import FloatingCta from '@/components/FloatingCta'
 
 const displayFont = Playfair_Display({
   subsets: ['latin'],
@@ -18,13 +19,10 @@ const bodyFont = Source_Sans_3({
 })
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Biaggio Flooring | Premium Flooring & Bathroom Remodeling',
-    template: '%s | Biaggio Flooring',
-  },
+  title: 'Project Estimate | Biaggio-style',
 
   description:
-    'Luxury flooring installation and bathroom remodeling in Central Florida. Trusted craftsmanship with over 15 years of experience.',
+    'Get a labor-only estimate for your flooring & tile project',
 
   keywords: [
     'flooring installation Orlando',
@@ -35,9 +33,9 @@ export const metadata: Metadata = {
   ],
 
   openGraph: {
-    title: 'Biaggio Flooring',
+    title: 'Project Estimate | Biaggio-style',
     description:
-      'Premium flooring installation and bathroom remodeling in Central Florida.',
+      'Get a labor-only estimate for your flooring & tile project',
     url: 'https://biaggioflooring.com',
     siteName: 'Biaggio Flooring',
     images: [
@@ -49,6 +47,13 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website',
+  },
+
+  alternates: {
+    languages: {
+      en: '/en',
+      pt: '/pt',
+    },
   },
 
   viewport: {
@@ -79,6 +84,9 @@ export default function RootLayout({
 
         {/* FOOTER */}
         <Footer />
+
+        {/* FLOATING CTA */}
+        <FloatingCta />
 
       </body>
     </html>

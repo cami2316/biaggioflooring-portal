@@ -21,6 +21,7 @@ export default function Header() {
     { name: 'Services', href: '/services' },
     { name: 'Portfolio', href: '/portfolio' },
     { name: 'About', href: '/about' },
+    { name: 'Estimate', href: '/estimate' },
     { name: 'Contact', href: '/contact' },
   ]
 
@@ -73,7 +74,7 @@ export default function Header() {
 
           {/* CTA */}
           <Link
-            href="/contact"
+            href="/estimate"
             className="
               ml-4
               bg-brand-primary
@@ -129,7 +130,7 @@ export default function Header() {
           ))}
 
           <Link
-            href="/contact"
+            href="/estimate"
             onClick={() => setIsMenuOpen(false)}
             className="
               bg-brand-primary
