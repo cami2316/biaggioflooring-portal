@@ -71,17 +71,22 @@ export const validateEstimateInput = (data: EstimateInput) => {
   if (!Array.isArray(data.areas) || data.areas.length === 0) {
     addFieldError(errors, 'areas', 'At least one area is required.')
   } else {
+    let hasPositiveSqft = false
+
     data.areas.forEach((area, index) => {
-      if (!Number.isFinite(area.sqft) || area.sqft <= 0) {
-        addAreaError(errors, index, 'sqft', 'Square footage must be greater than 0.')
+      if (!Number.isFinite(area.sqft) || area.sqft < 0) {
+        addAreaError(errors, index, 'sqft', 'Square footage must be 0 or greater.')
+        return
       }
-      if (!area.material?.trim()) {
-        addAreaError(errors, index, 'material', 'Material is required.')
-      }
-      if (!area.layout?.trim()) {
-        addAreaError(errors, index, 'layout', 'Layout is required.')
+
+      if (area.sqft > 0) {
+        hasPositiveSqft = true
       }
     })
+
+    if (!hasPositiveSqft) {
+      addFieldError(errors, 'areas', 'At least one area must have square footage greater than zero.')
+    }
   }
 
   const isValid = Object.keys(errors.fields).length === 0

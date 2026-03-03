@@ -99,21 +99,10 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return false
     }
 
-    return areas.every((area) => {
-      if (!Number.isFinite(area.sqft) || area.sqft <= 0) {
-        return false
-      }
+    const hasPositive = areas.some((area) => Number.isFinite(area.sqft) && area.sqft > 0)
+    const allNonNegative = areas.every((area) => Number.isFinite(area.sqft) && area.sqft >= 0)
 
-      if (area.type === 'floor' && !area.material) {
-        return false
-      }
-
-      if (area.type === 'shower' && !area.material) {
-        return false
-      }
-
-      return true
-    })
+    return hasPositive && allNonNegative
   }, [areas])
 
   useEffect(() => {
@@ -136,21 +125,10 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return false
     }
 
-    return areas.every((area) => {
-      if (!Number.isFinite(area.sqft) || area.sqft < 1) {
-        return false
-      }
+    const hasPositive = areas.some((area) => Number.isFinite(area.sqft) && area.sqft > 0)
+    const allNonNegative = areas.every((area) => Number.isFinite(area.sqft) && area.sqft >= 0)
 
-      if (!area.material?.trim()) {
-        return false
-      }
-
-      if (!area.layout?.trim()) {
-        return false
-      }
-
-      return true
-    })
+    return hasPositive && allNonNegative
   }, [areas])
 
   const handleNext = async () => {
@@ -341,7 +319,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Area Type</label>
                     <Select
-                      {...register(`areas.${index}.type` as const, { required: true })}
+                      {...register(`areas.${index}.type` as const)}
                       onChange={(event) => {
                         const nextType = event.target.value as AreaType
                         const current = areas[index]
@@ -376,11 +354,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Square Footage</label>
                     <Input
                       type="number"
-                      min="1"
+                      min="0"
                       step="0.01"
                       {...register(`areas.${index}.sqft` as const, {
                         required: 'Enter square footage.',
-                        min: { value: 1, message: 'Square footage must be at least 1.' },
+                        min: { value: 0, message: 'Square footage must be 0 or greater.' },
                         valueAsNumber: true,
                       })}
                       placeholder="0"
@@ -394,7 +372,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                     <div>
                       <label className="block text-sm font-semibold text-brand-charcoal mb-2">Floor Material</label>
                       <Select
-                        {...register(`areas.${index}.material` as const, { required: true })}
+                        {...register(`areas.${index}.material` as const)}
                       >
                         <option value="ceramic">Ceramic</option>
                         <option value="porcelain">Porcelain</option>
@@ -408,9 +386,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                       </label>
                       <Input
                         type="text"
-                        {...register(`areas.${index}.material` as const, {
-                          required: 'Enter the material.',
-                        })}
+                        {...register(`areas.${index}.material` as const)}
                         placeholder="Porcelain tile"
                       />
                       {errors.areas?.[index]?.material ? (
@@ -445,9 +421,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Layout</label>
                     <Select
-                      {...register(`areas.${index}.layout` as const, {
-                        required: 'Please choose a layout/pattern.',
-                      })}
+                      {...register(`areas.${index}.layout` as const)}
                     >
                       <option value="">Select layout</option>
                       <option value="diagonal">Diagonal Lay</option>
