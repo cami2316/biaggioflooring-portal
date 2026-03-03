@@ -357,7 +357,6 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                       min="0"
                       step="0.01"
                       {...register(`areas.${index}.sqft` as const, {
-                        required: 'Enter square footage.',
                         min: { value: 0, message: 'Square footage must be 0 or greater.' },
                         valueAsNumber: true,
                       })}
