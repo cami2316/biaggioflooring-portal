@@ -240,7 +240,14 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       }
 
       window.sessionStorage.setItem(`estimate:${estimateId}`, JSON.stringify(snapshot))
-      router.push(`${redirectBase}/${estimateId}`)
+      const query = new URLSearchParams({ submitted: '1' })
+      if (Number.isFinite(snapshot.low)) {
+        query.set('min', String(snapshot.low))
+      }
+      if (Number.isFinite(snapshot.high)) {
+        query.set('max', String(snapshot.high))
+      }
+      router.push(`${redirectBase}/${estimateId}?${query.toString()}`)
     } catch (error) {
       console.error('Failed to submit estimate request:', error)
       setRetryPayload(values)
