@@ -20,6 +20,23 @@ import {
 
 type EstimateFormValues = EstimateInput
 
+const defaultArea = {
+  type: 'floor' as const,
+  sqft: 0,
+  material: '',
+  tileSize: '',
+  layout: '',
+  surface: 'floor' as const,
+  showerType: undefined as EstimateInput['areas'][number]['showerType'],
+  extras: {
+    demolition: false,
+    cementBoard: false,
+    bench: false,
+    niches: 0,
+    window: false,
+  },
+}
+
 const steps = ['Project Info', 'Areas', 'Review']
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
@@ -56,24 +73,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       email: '',
       phone: '',
       address: '',
-      areas: [
-        {
-          type: 'floor',
-          sqft: 0,
-          material: '',
-          tileSize: '',
-          layout: '',
-          surface: 'floor',
-          showerType: undefined,
-          extras: {
-            demolition: false,
-            cementBoard: false,
-            bench: false,
-            niches: 0,
-            window: false,
-          },
-        },
-      ],
+      areas: [defaultArea],
     },
     mode: 'onChange',
   })
@@ -82,6 +82,12 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     control,
     name: 'areas',
   })
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      append(defaultArea)
+    }
+  }, [append, fields.length])
 
   const areas = watch('areas')
   const clientName = watch('clientName')
@@ -613,22 +619,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
             <Button
               type="button"
               onClick={() =>
-                append({
-                  type: 'floor',
-                  sqft: 0,
-                  material: '',
-                  tileSize: '',
-                  layout: '',
-                  surface: 'floor',
-                  showerType: undefined,
-                  extras: {
-                    demolition: false,
-                    cementBoard: false,
-                    bench: false,
-                    niches: 0,
-                    window: false,
-                  },
-                })
+                append(defaultArea)
               }
               variant="secondary"
               className="inline-flex items-center gap-2"

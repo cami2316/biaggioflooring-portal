@@ -39,12 +39,15 @@ export default async function EstimateResultPage(
 
           <div className="mt-8 rounded-lg border border-yellow-300 bg-yellow-50 p-6 text-center">
             <p className="text-xl font-semibold">
-              We sent your estimate by email. Please check your SPAM folder as well.
+              We emailed your estimate.
+            </p>
+            <p className="mt-3 text-base">
+              Please check your spam/junk folder.
             </p>
           </div>
 
           <p className="text-base text-brand-charcoal/80">
-            Biaggio Flooring will contact you soon to confirm details and finalize your quote.
+            We will contact you within one business day.
           </p>
 
           <Disclaimer>

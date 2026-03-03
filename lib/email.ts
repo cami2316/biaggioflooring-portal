@@ -106,8 +106,9 @@ export const sendClientEstimateEmail = async (
         <p style="margin: 0 0 16px;">Thanks for reaching out to Biaggio Flooring. We will follow up shortly.</p>
         <p style="margin: 0 0 16px;">Here is your preliminary labor-only range:</p>
         <p style="margin: 0 0 20px; font-size: 20px; font-weight: 700; color: #212121;">${rangeText}</p>
-        <p style="margin: 0 0 16px; font-weight: 600;">Important: please check your SPAM folder for our email.</p>
-        <p style="margin: 0 0 16px;">We will contact you soon to confirm details and finalize your quote.</p>
+        <p style="margin: 0 0 12px; font-weight: 600;">We emailed your estimate.</p>
+        <p style="margin: 0 0 16px;">Please check your spam/junk folder.</p>
+        <p style="margin: 0 0 16px;">We will contact you within one business day.</p>
         <div style="margin: 0 0 16px; padding: 12px 16px; border: 1px solid #e5e5e5; border-radius: 14px; background: #fafafa;">
           <p style="margin: 0; font-size: 14px; color: #333;">${ESTIMATE_DISCLAIMER}</p>
         </div>
