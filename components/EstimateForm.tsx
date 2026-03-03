@@ -564,13 +564,13 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
             <Button
               type="button"
               onClick={handleNext}
-              disabled={!hasAtLeastOneValidArea}
+              disabled={step === 1 && !hasAtLeastOneValidArea}
             >
-              Continue
+              {step === 0 ? 'Next: Project Details' : 'Calculate Estimate'}
             </Button>
           ) : (
             <Button type="submit" disabled={isSubmitting || !step1Valid}>
-              {isSubmitting ? 'Submitting...' : 'Submit Estimate Request'}
+              {isSubmitting ? 'Submitting...' : 'Request Estimate'}
             </Button>
           )}
         </div>
