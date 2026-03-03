@@ -48,6 +48,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     control,
     watch,
     trigger,
+    getValues,
     formState: { errors, isValid },
     reset,
   } = useForm<EstimateFormValues>({
@@ -158,11 +159,13 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
   }
 
   const onSubmit = async (values: EstimateFormValues) => {
+    console.log('🔥 onSubmit EXECUTED')
     setStatus(null)
 
     setIsSubmitting(true)
 
     try {
+      console.log('🔥 Before fetch')
       console.log('Submitting estimate')
       const response = await fetch('/api/estimate', {
         method: 'POST',
@@ -171,6 +174,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       })
 
       const payload = await response.json()
+      console.log('🔥 After fetch')
       console.log('API response', payload)
 
       if (!response.ok) {
@@ -571,9 +575,16 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
               {step === 0 ? 'Next: Project Details' : 'Calculate Estimate'}
             </Button>
           ) : (
-            <Button type="submit" disabled={isSubmitting || !step1Valid}>
-              {isSubmitting ? 'Submitting...' : 'Request Estimate'}
-            </Button>
+            <button
+              type="button"
+              onClick={() => {
+                console.log('🔥 Direct click test')
+                void onSubmit(getValues())
+              }}
+              className="inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-brand-accent sm:px-5 sm:py-3 md:px-6 md:py-3 md:text-sm"
+            >
+              Test Submit
+            </button>
           )}
         </div>
       </form>
