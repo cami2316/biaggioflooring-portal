@@ -100,8 +100,8 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return false
     }
 
-    const hasPositive = areas.some((area) => Number.isFinite(area.sqft) && area.sqft > 0)
-    const allNonNegative = areas.every((area) => Number.isFinite(area.sqft) && area.sqft >= 0)
+    const hasPositive = areas.some((area) => Number(area.sqft) > 0)
+    const allNonNegative = areas.every((area) => Number(area.sqft) >= 0)
 
     return hasPositive && allNonNegative
   }, [areas])
@@ -126,8 +126,8 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return false
     }
 
-    const hasPositive = areas.some((area) => Number.isFinite(area.sqft) && area.sqft > 0)
-    const allNonNegative = areas.every((area) => Number.isFinite(area.sqft) && area.sqft >= 0)
+    const hasPositive = areas.some((area) => Number(area.sqft) > 0)
+    const allNonNegative = areas.every((area) => Number(area.sqft) >= 0)
 
     return hasPositive && allNonNegative
   }, [areas])
@@ -369,6 +369,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                       {...register(`areas.${index}.sqft` as const, {
                         min: { value: 0, message: 'Square footage must be 0 or greater.' },
                         valueAsNumber: true,
+                        setValueAs: (value) => (value === '' || value == null ? 0 : Number(value)),
                       })}
                       placeholder="0"
                     />
