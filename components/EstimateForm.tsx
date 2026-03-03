@@ -163,6 +163,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     setIsSubmitting(true)
 
     try {
+      console.log('Submitting estimate')
       const response = await fetch('/api/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -170,6 +171,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       })
 
       const payload = await response.json()
+      console.log('API response', payload)
 
       if (!response.ok) {
         setStatus({
