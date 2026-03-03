@@ -48,7 +48,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     control,
     watch,
     trigger,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
   } = useForm<EstimateFormValues>({
     defaultValues: {
@@ -94,6 +94,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     address,
     areas,
   }), [clientName, email, phone, address, areas])
+  const hasAtLeastOneValidArea = areas.some((area) => Number(area.sqft) > 0)
   const isEstimateReady = useMemo(() => {
     if (!areas.length) {
       return false
@@ -563,7 +564,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
             <Button
               type="button"
               onClick={handleNext}
-              disabled={isSubmitting || (step === 0 ? !step0Valid : !step1Valid)}
+              disabled={!hasAtLeastOneValidArea}
             >
               Continue
             </Button>
