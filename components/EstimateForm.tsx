@@ -60,10 +60,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
         {
           type: 'floor',
           sqft: 0,
-          material: 'ceramic',
+          material: '',
           tileSize: '',
           layout: '',
           surface: 'floor',
+          showerType: undefined,
           extras: {
             demolition: false,
             cementBoard: false,
@@ -87,6 +88,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
   const email = watch('email')
   const phone = watch('phone')
   const address = watch('address')
+  const hasZeroSqftArea = areas.some((area) => Number(area.sqft) <= 0)
   const estimate = useMemo(() => calculateLaborRange({
     clientName,
     email,
@@ -94,16 +96,37 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     address,
     areas,
   }), [clientName, email, phone, address, areas])
-  const hasAtLeastOneValidArea = areas.some((area) => Number(area.sqft) > 0)
+  const hasAtLeastOneValidArea = areas.some((area) => {
+    const sqft = Number(area.sqft)
+    return Number.isFinite(sqft) && sqft > 0
+  })
   const isEstimateReady = useMemo(() => {
     if (!areas.length) {
       return false
     }
 
-    const hasPositive = areas.some((area) => Number(area.sqft) > 0)
-    const allNonNegative = areas.every((area) => Number(area.sqft) >= 0)
+    const hasPositive = areas.some((area) => {
+      const sqft = Number(area.sqft)
+      return Number.isFinite(sqft) && sqft > 0
+    })
+    const allNonNegative = areas.every((area) => {
+      const sqft = Number(area.sqft)
+      return !Number.isFinite(sqft) || sqft >= 0
+    })
+    const materialsReady = areas.every((area) => {
+      if (Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.material?.trim())
+    })
+    const showerReady = areas.every((area) => {
+      if (area.type !== 'shower' || Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.surface) && Boolean(area.showerType)
+    })
 
-    return hasPositive && allNonNegative
+    return hasPositive && allNonNegative && materialsReady && showerReady
   }, [areas])
 
   useEffect(() => {
@@ -113,10 +136,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
   }, [areas])
 
   const step0Valid = useMemo(() => {
+    const sanitizedPhone = phone.replace(/\D/g, '')
     return Boolean(
       clientName.trim() &&
       emailRegex.test(email.trim()) &&
-      phoneRegex.test(phone.trim()) &&
+      phoneRegex.test(sanitizedPhone) &&
       address.trim()
     )
   }, [clientName, email, phone, address])
@@ -126,10 +150,28 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return false
     }
 
-    const hasPositive = areas.some((area) => Number(area.sqft) > 0)
-    const allNonNegative = areas.every((area) => Number(area.sqft) >= 0)
+    const hasPositive = areas.some((area) => {
+      const sqft = Number(area.sqft)
+      return Number.isFinite(sqft) && sqft > 0
+    })
+    const allNonNegative = areas.every((area) => {
+      const sqft = Number(area.sqft)
+      return !Number.isFinite(sqft) || sqft >= 0
+    })
+    const materialsReady = areas.every((area) => {
+      if (Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.material?.trim())
+    })
+    const showerReady = areas.every((area) => {
+      if (area.type !== 'shower' || Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.surface) && Boolean(area.showerType)
+    })
 
-    return hasPositive && allNonNegative
+    return hasPositive && allNonNegative && materialsReady && showerReady
   }, [areas])
 
   const handleNext = async () => {
@@ -282,6 +324,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                   {...register('phone', {
                     required: 'Please enter a phone number.',
                     pattern: { value: phoneRegex, message: 'Phone must be numeric.' },
+                    setValueAs: (value) => (value || '').replace(/\D/g, ''),
                   })}
                   placeholder="(407) 555-0199"
                 />
@@ -325,6 +368,24 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                   ) : null}
                 </div>
 
+                {areas[index]?.type === 'shower' ? (
+                  <div className="mt-6">
+                    <label className="block text-sm font-semibold text-brand-charcoal mb-2">Shower Type</label>
+                    <Select
+                      {...register(`areas.${index}.showerType` as const, {
+                        required: 'Select a shower type.',
+                      })}
+                    >
+                      <option value="">Select type</option>
+                      <option value="walk-in">Walk-in shower</option>
+                      <option value="curb">Curb</option>
+                    </Select>
+                    {errors.areas?.[index]?.showerType ? (
+                      <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.showerType?.message}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Area Type</label>
@@ -336,8 +397,9 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                         update(index, {
                           ...current,
                           type: nextType,
-                          surface: nextType === 'shower' ? current.surface ?? 'floor' : 'floor',
-                          material: nextType === 'floor' ? 'ceramic' : current.material,
+                          surface: nextType === 'shower' ? '' : 'floor',
+                          material: '',
+                          showerType: nextType === 'shower' ? undefined : undefined,
                         })
                       }}
                     >
@@ -352,11 +414,17 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                     <div>
                       <label className="block text-sm font-semibold text-brand-charcoal mb-2">Shower Surface</label>
                       <Select
-                        {...register(`areas.${index}.surface` as const)}
+                        {...register(`areas.${index}.surface` as const, {
+                          required: 'Select a shower surface.',
+                        })}
                       >
+                        <option value="">Select surface</option>
                         <option value="floor">Shower Floor (Compacted Pan)</option>
                         <option value="wall">Shower Wall</option>
                       </Select>
+                      {errors.areas?.[index]?.surface ? (
+                        <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.surface?.message}</p>
+                      ) : null}
                     </div>
                   ) : null}
 
@@ -369,7 +437,15 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                       {...register(`areas.${index}.sqft` as const, {
                         min: { value: 0, message: 'Square footage must be 0 or greater.' },
                         valueAsNumber: true,
-                        setValueAs: (value) => (value === '' || value == null ? 0 : Number(value)),
+                        setValueAs: (value) => {
+                          if (value === '' || value == null) {
+                            return 0
+                          }
+                          if (typeof value === 'string') {
+                            return Number(value.replace(',', '.'))
+                          }
+                          return Number(value)
+                        },
                       })}
                       placeholder="0"
                     />
@@ -382,23 +458,34 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                     <div>
                       <label className="block text-sm font-semibold text-brand-charcoal mb-2">Floor Material</label>
                       <Select
-                        {...register(`areas.${index}.material` as const)}
+                        {...register(`areas.${index}.material` as const, {
+                          required: 'Select a material.',
+                        })}
                       >
+                        <option value="">Select material</option>
                         <option value="ceramic">Ceramic</option>
                         <option value="porcelain">Porcelain</option>
                         <option value="marble">Marble</option>
                       </Select>
+                      {errors.areas?.[index]?.material ? (
+                        <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.material?.message}</p>
+                      ) : null}
                     </div>
                   ) : (
                     <div>
                       <label className="block text-sm font-semibold text-brand-charcoal mb-2">
                         {areas[index]?.type === 'shower' ? 'Shower Material' : 'Material'}
                       </label>
-                      <Input
-                        type="text"
-                        {...register(`areas.${index}.material` as const)}
-                        placeholder="Porcelain tile"
-                      />
+                      <Select
+                        {...register(`areas.${index}.material` as const, {
+                          required: 'Select a material.',
+                        })}
+                      >
+                        <option value="">Select material</option>
+                        <option value="ceramic">Ceramic</option>
+                        <option value="porcelain">Porcelain</option>
+                        <option value="marble">Marble</option>
+                      </Select>
                       {errors.areas?.[index]?.material ? (
                         <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.material?.message}</p>
                       ) : null}
@@ -522,10 +609,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                 append({
                   type: 'floor',
                   sqft: 0,
-                  material: 'ceramic',
+                  material: '',
                   tileSize: '',
                   layout: '',
                   surface: 'floor',
+                  showerType: undefined,
                   extras: {
                     demolition: false,
                     cementBoard: false,
@@ -540,6 +628,12 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
             >
               + Add Another Area
             </Button>
+
+            {hasZeroSqftArea ? (
+              <Alert className="mt-4" variant="info">
+                Areas with 0 sqft will not be included in the estimate calculation.
+              </Alert>
+            ) : null}
           </div>
         ) : null}
 

@@ -69,6 +69,7 @@ const renderAreasHtml = (areas: EstimateInput['areas']) => {
         Material: ${escapeHtml(area.material || 'N/A')}<br />
         Tile size: ${escapeHtml(area.tileSize || 'N/A')}<br />
         Layout: ${escapeHtml(area.layout || 'N/A')}<br />
+        Shower type: ${escapeHtml(area.showerType || 'N/A')}<br />
         Demolition: ${formatBoolean(Boolean(extras.demolition))}<br />
         Cement board: ${formatBoolean(Boolean(extras.cementBoard))}<br />
         Bench: ${formatBoolean(Boolean(extras.bench))}<br />
@@ -105,6 +106,8 @@ export const sendClientEstimateEmail = async (
         <p style="margin: 0 0 16px;">Thanks for reaching out to Biaggio Flooring. We will follow up shortly.</p>
         <p style="margin: 0 0 16px;">Here is your preliminary labor-only range:</p>
         <p style="margin: 0 0 20px; font-size: 20px; font-weight: 700; color: #212121;">${rangeText}</p>
+        <p style="margin: 0 0 16px; font-weight: 600;">Important: please check your SPAM folder for our email.</p>
+        <p style="margin: 0 0 16px;">We will contact you soon to confirm details and finalize your quote.</p>
         <div style="margin: 0 0 16px; padding: 12px 16px; border: 1px solid #e5e5e5; border-radius: 14px; background: #fafafa;">
           <p style="margin: 0; font-size: 14px; color: #333;">${ESTIMATE_DISCLAIMER}</p>
         </div>

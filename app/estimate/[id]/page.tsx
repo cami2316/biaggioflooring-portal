@@ -62,16 +62,14 @@ export default async function EstimateResultPage(
     console.error('Failed to fetch estimate:', error)
   }
 
-  const firstName = snapshot?.clientName?.split(' ')[0] || 'there'
-
   return (
     <section className="py-24 bg-brand-white">
       <div className="container mx-auto px-4 max-w-3xl">
         <p className="uppercase tracking-[0.45em] text-brand-charcoal/60 text-sm mb-4">
-          Estimate Result
+          Estimate Submitted
         </p>
         <h1 className="text-4xl md:text-5xl font-semibold text-brand-charcoal mb-6">
-          {snapshot ? `Thank you, ${firstName}.` : 'Estimate Result'}
+          Estimate Submitted
         </h1>
 
         {!snapshot ? (
@@ -82,23 +80,23 @@ export default async function EstimateResultPage(
           <div className="space-y-6">
             <Card className="p-6">
               <p className="text-sm uppercase tracking-widest text-brand-charcoal/60 mb-3">
-                Estimated labor investment
+                Estimated Total
               </p>
               <RangeResult range={`${formatCurrency(snapshot.low)} – ${formatCurrency(snapshot.high)}`} />
             </Card>
 
             <div className="mt-8 rounded-lg border border-yellow-300 bg-yellow-50 p-6 text-center">
               <p className="text-xl font-semibold">
-                We have sent your estimate details by email.
-              </p>
-              <p className="mt-3 text-base">
-                If you do not see it within a few minutes,
-                please check your Spam or Junk folder.
+                Important: please check your SPAM folder for our email.
               </p>
             </div>
 
+            <p className="text-base text-brand-charcoal/80">
+              We will contact you soon to confirm details and finalize your quote.
+            </p>
+
             <Disclaimer>
-              This is a preliminary labor-only estimate. We will follow up to confirm details.
+              This is a preliminary labor-only estimate.
             </Disclaimer>
           </div>
         )}

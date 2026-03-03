@@ -22,8 +22,7 @@ This report lists all pricing constants currently used by the estimate calculato
 
 ## Layout Multipliers (added to base rate)
 - Diagonal: +0.75
-- Herringbone: +1.5
- - All others: +1.5
+- Herringbone: +0.75
 
 ## Extras
 - Demolition (per sqft): 1.75
@@ -31,6 +30,8 @@ This report lists all pricing constants currently used by the estimate calculato
 - Niche (per unit): 300.0
 - Bench (per unit): 150.0
 - Window (per unit): 100.0
+- Shower type (walk-in): 200.0
+- Shower type (curb): 100.0
 
 ## Range Logic
 - Base total = sum of (sqft * adjusted base rate)

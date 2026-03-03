@@ -6,7 +6,8 @@ export type EstimateAreaInput = {
   material: string
   tileSize: string
   layout: string
-  surface: 'floor' | 'wall'
+  surface: 'floor' | 'wall' | ''
+  showerType?: 'walk-in' | 'curb'
   extras: {
     demolition: boolean
     cementBoard: boolean
@@ -30,7 +31,7 @@ export type ValidationErrors = {
 }
 
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-export const phoneRegex = /^\d+$/
+export const phoneRegex = /^\d{10,11}$/
 
 const addFieldError = (errors: ValidationErrors, field: string, message: string) => {
   if (!errors.fields[field]) {
@@ -52,6 +53,8 @@ const addAreaError = (errors: ValidationErrors, index: number, field: string, me
 export const validateEstimateInput = (data: EstimateInput) => {
   const errors: ValidationErrors = { fields: {}, areas: [] }
 
+  const sanitizedPhone = (data.phone || '').replace(/\D/g, '')
+
   if (!data.clientName?.trim()) {
     addFieldError(errors, 'clientName', 'Name is required.')
   }
@@ -60,7 +63,7 @@ export const validateEstimateInput = (data: EstimateInput) => {
     addFieldError(errors, 'email', 'Valid email is required.')
   }
 
-  if (!data.phone?.trim() || !phoneRegex.test(data.phone.trim())) {
+  if (!sanitizedPhone || !phoneRegex.test(sanitizedPhone)) {
     addFieldError(errors, 'phone', 'Phone must be numeric.')
   }
 
@@ -81,6 +84,23 @@ export const validateEstimateInput = (data: EstimateInput) => {
 
       if (area.sqft > 0) {
         hasPositiveSqft = true
+      }
+
+      if (area.sqft <= 0) {
+        return
+      }
+
+      if (!area.material?.trim()) {
+        addAreaError(errors, index, 'material', 'Material is required.')
+      }
+
+      if (area.type === 'shower') {
+        if (!area.surface) {
+          addAreaError(errors, index, 'surface', 'Shower surface is required.')
+        }
+        if (!area.showerType) {
+          addAreaError(errors, index, 'showerType', 'Shower type is required.')
+        }
       }
     })
 
