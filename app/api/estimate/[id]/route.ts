@@ -15,9 +15,12 @@ const toEstimateInput = (data: FirebaseFirestore.DocumentData): EstimateInput =>
   }
 }
 
-export async function GET(_request: NextRequest, context: { params: { id: string } }) {
+export async function GET(
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = context.params
+    const { id } = await context.params
     const docRef = adminDb.collection('estimateRequests').doc(id)
     const snapshot = await docRef.get()
 

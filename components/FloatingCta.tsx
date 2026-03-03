@@ -3,6 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+  }
+}
+
 const FloatingCta = () => {
   const [isOpen, setIsOpen] = useState(false)
 
