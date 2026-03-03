@@ -1,24 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { adminAuth } from '@/lib/firebaseAdmin'
+export function middleware(request: NextRequest) {
+  const session = request.cookies.get('session')?.value
 
-const getSessionCookie = (request: NextRequest) => {
-  return request.cookies.get('__session')?.value || null
-}
-
-export async function middleware(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request)
-
-  if (!sessionCookie) {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
-  try {
-    const decoded = await adminAuth.verifySessionCookie(sessionCookie, true)
-    if (decoded.role !== 'admin') {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-  } catch {
+  if (!session) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
