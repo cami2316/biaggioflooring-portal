@@ -23,24 +23,34 @@ const pricing = {
     marble: 6,
   },
   wall: {
-    base: 10,
+    ceramic: 10,
+    porcelain: 12,
+    marble: 15,
+  },
+  backsplash: {
+    ceramic: 16,
+    porcelain: 17,
+    marble: 20,
   },
   shower: {
     floorWithCompactedPan: 35,
-    wallBase: 12,
+    wallCeramic: 10,
+    wallPorcelain: 12,
+    wallMarble: 15,
   },
   extras: {
     demolitionPerSqft: 1.75,
     cementBoardPerSqft: 3,
-    niche: 200,
-    bench: 450,
-    window: 300,
+    niche: 300,
+    bench: 150,
+    window: 100,
   },
 }
 
 const layoutMultipliers: Record<string, number> = {
   diagonal: 0.75,
   herringbone: 1.5,
+  other: 1.5,
 }
 
 const roundToTwo = (value: number) => Math.round(value * 100) / 100
@@ -52,13 +62,20 @@ const getBaseRate = (area: EstimateInput['areas'][number]) => {
   }
 
   if (area.type === 'wall' || area.type === 'backsplash') {
-    return pricing.wall.base
+    const materialKey = area.material as keyof typeof pricing.wall
+    const fallback = pricing.wall.ceramic
+    const rateSource = area.type === 'wall' ? pricing.wall : pricing.backsplash
+    return rateSource[materialKey] ?? fallback
   }
 
   if (area.type === 'shower') {
     return area.surface === 'floor'
       ? pricing.shower.floorWithCompactedPan
-      : pricing.shower.wallBase
+      : (area.material === 'porcelain'
+        ? pricing.shower.wallPorcelain
+        : area.material === 'marble'
+          ? pricing.shower.wallMarble
+          : pricing.shower.wallCeramic)
   }
 
   return 0
@@ -72,8 +89,10 @@ const applyLayoutMultiplier = (rate: number, layout: string) => {
   const normalized = layout.trim().toLowerCase()
   const isDiagonal = normalized.includes('diagonal')
   const isHerringbone = normalized.includes('herringbone')
+  const isOther = !isDiagonal && !isHerringbone
   const layoutAdd = (isDiagonal ? layoutMultipliers.diagonal : 0)
     + (isHerringbone ? layoutMultipliers.herringbone : 0)
+    + (isOther ? layoutMultipliers.other : 0)
 
   return rate + layoutAdd
 }
@@ -122,7 +141,7 @@ const calculateBreakdown = (input: EstimateInput): LaborBreakdown => {
   }
 
   const min = roundToTwo(total)
-  const max = roundToTwo(total * 1.12)
+  const max = roundToTwo(total * 1.18)
 
   return {
     totalSqft: roundToTwo(totalSqft),
