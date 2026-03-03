@@ -1,6 +1,3 @@
-'use client'
-
-import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 
 import { Button, Card, Disclaimer, RangeResult } from '@/components/ui'
@@ -16,72 +13,56 @@ type EstimateSnapshot = {
   low: number
   high: number
   clientName: string
-  areas?: Array<{ sqft: number }>
-  breakdown?: {
-    totalSqft: number
-    baseTotal: number
-    extrasTotal: number
-    min: number
-    max: number
-  }
 }
 
 const formatCurrency = (value: number) => currencyFormatter.format(Math.ceil(value))
 
-export default function EstimateResultPage({ params }: { params: { id: string } }) {
-  const [snapshot, setSnapshot] = useState<EstimateSnapshot | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+const getBaseUrl = () => {
+  if (process.env.PUBLIC_BASE_URL) {
+    return process.env.PUBLIC_BASE_URL
+  }
 
-  useEffect(() => {
-    const stored = window.sessionStorage.getItem(`estimate:${params.id}`)
-    if (stored) {
-      try {
-        setSnapshot(JSON.parse(stored) as EstimateSnapshot)
-      } catch (error) {
-        console.error('Failed to parse estimate snapshot:', error)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+
+  return 'http://localhost:3000'
+}
+
+export default async function EstimateResultPage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+
+  if (!id) {
+    return (
+      <section className="py-24 bg-brand-white">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <Card className="p-6 text-brand-charcoal/70">
+            We could not find your estimate details. Please submit the form again.
+          </Card>
+        </div>
+      </section>
+    )
+  }
+
+  let snapshot: EstimateSnapshot | null = null
+  try {
+    const response = await fetch(`${getBaseUrl()}/api/estimate/${id}`, { cache: 'no-store' })
+    if (response.ok) {
+      const data = await response.json()
+      snapshot = {
+        id: data.id,
+        low: data.low,
+        high: data.high,
+        clientName: data.clientName,
       }
     }
-    setIsLoading(false)
-  }, [params.id])
+  } catch (error) {
+    console.error('Failed to fetch estimate:', error)
+  }
 
-  useEffect(() => {
-    if (isLoading || snapshot) {
-      return
-    }
-
-    const fetchEstimate = async () => {
-      try {
-        const response = await fetch(`/api/estimate/${params.id}`)
-        if (!response.ok) {
-          return
-        }
-        const data = await response.json()
-        setSnapshot({
-          id: data.id,
-          low: data.low,
-          high: data.high,
-          clientName: data.clientName,
-          breakdown: data.breakdown,
-        })
-      } catch (error) {
-        console.error('Failed to fetch estimate:', error)
-      }
-    }
-
-    void fetchEstimate()
-  }, [isLoading, params.id, snapshot])
-
-  const content = useMemo(() => {
-    if (isLoading) {
-      return 'Loading your estimate...'
-    }
-
-    if (!snapshot) {
-      return 'We could not find your estimate details. Please submit the form again.'
-    }
-
-    return null
-  }, [isLoading, snapshot])
+  const firstName = snapshot?.clientName?.split(' ')[0] || 'there'
 
   return (
     <section className="py-24 bg-brand-white">
@@ -90,29 +71,24 @@ export default function EstimateResultPage({ params }: { params: { id: string } 
           Estimate Result
         </p>
         <h1 className="text-4xl md:text-5xl font-semibold text-brand-charcoal mb-6">
-          {snapshot ? `Thank you, ${snapshot.clientName}.` : 'Estimate Result'}
+          {snapshot ? `Thank you, ${firstName}.` : 'Estimate Result'}
         </h1>
 
-        {content ? (
-          <Card className="p-6 text-brand-charcoal/70">{content}</Card>
+        {!snapshot ? (
+          <Card className="p-6 text-brand-charcoal/70">
+            We could not find your estimate details. Please submit the form again.
+          </Card>
         ) : (
           <div className="space-y-6">
-            <RangeResult range={`${formatCurrency(snapshot?.low ?? 0)} – ${formatCurrency(snapshot?.high ?? 0)}`} />
-
             <Card className="p-6">
-              <p className="text-sm uppercase tracking-widest text-brand-charcoal/60 mb-4">
-                Estimate Breakdown
+              <p className="text-sm uppercase tracking-widest text-brand-charcoal/60 mb-3">
+                Estimated labor investment
               </p>
-              <div className="space-y-2 text-brand-charcoal">
-                <p>Total sqft: {snapshot?.breakdown?.totalSqft ?? 0}</p>
-                <p>Base areas: {formatCurrency(snapshot?.breakdown?.baseTotal ?? 0)}</p>
-                <p>Extras: {formatCurrency(snapshot?.breakdown?.extrasTotal ?? 0)}</p>
-                <p>Final range: {formatCurrency(snapshot?.breakdown?.min ?? 0)} – {formatCurrency(snapshot?.breakdown?.max ?? 0)}</p>
-              </div>
+              <RangeResult range={`${formatCurrency(snapshot.low)} – ${formatCurrency(snapshot.high)}`} />
             </Card>
 
             <Disclaimer>
-              This is a preliminary labor-only estimate. It is non-binding and subject to on-site verification.
+              This is a preliminary labor-only estimate. We will follow up to confirm details.
             </Disclaimer>
           </div>
         )}

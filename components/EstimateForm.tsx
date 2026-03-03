@@ -48,8 +48,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     control,
     watch,
     trigger,
-    getValues,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
   } = useForm<EstimateFormValues>({
     defaultValues: {
@@ -159,14 +158,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
   }
 
   const onSubmit = async (values: EstimateFormValues) => {
-    console.log('🔥 onSubmit EXECUTED')
     setStatus(null)
 
     setIsSubmitting(true)
 
     try {
-      console.log('🔥 Before fetch')
-      console.log('Submitting estimate')
       const response = await fetch('/api/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -174,8 +170,6 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       })
 
       const payload = await response.json()
-      console.log('🔥 After fetch')
-      console.log('API response', payload)
 
       if (!response.ok) {
         setStatus({
@@ -185,8 +179,17 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
         return
       }
 
+      const estimateId = typeof payload?.id === 'string' ? payload.id : ''
+      if (!estimateId) {
+        setStatus({
+          message: 'Estimate ID missing from response. Please try again.',
+          variant: 'error',
+        })
+        return
+      }
+
       const snapshot = {
-        id: payload.id,
+        id: estimateId,
         low: payload.range?.min ?? 0,
         high: payload.range?.max ?? 0,
         breakdown: payload.breakdown,
@@ -194,8 +197,8 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
         clientName: values.clientName.trim(),
       }
 
-      window.sessionStorage.setItem(`estimate:${payload.id}`, JSON.stringify(snapshot))
-      router.push(`${redirectBase}/${payload.id}`)
+      window.sessionStorage.setItem(`estimate:${estimateId}`, JSON.stringify(snapshot))
+      router.push(`${redirectBase}/${estimateId}`)
     } catch (error) {
       console.error('Failed to submit estimate request:', error)
       setRetryPayload(values)
@@ -575,16 +578,9 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
               {step === 0 ? 'Next: Project Details' : 'Calculate Estimate'}
             </Button>
           ) : (
-            <button
-              type="button"
-              onClick={() => {
-                console.log('🔥 Direct click test')
-                void onSubmit(getValues())
-              }}
-              className="inline-flex items-center justify-center rounded-full bg-brand-primary px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-brand-accent sm:px-5 sm:py-3 md:px-6 md:py-3 md:text-sm"
-            >
-              Test Submit
-            </button>
+            <Button type="submit" disabled={isSubmitting || !step1Valid}>
+              {isSubmitting ? 'Submitting...' : 'Request Estimate'}
+            </Button>
           )}
         </div>
       </form>

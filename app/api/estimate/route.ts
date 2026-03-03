@@ -7,7 +7,7 @@ import {
   calculateLaborRange,
   ESTIMATE_DISCLAIMER,
 } from '@/lib/pricing'
-import { sendEstimateEmail } from '@/lib/email'
+import { sendClientEstimateEmail, sendInternalEstimateEmail } from '@/lib/email'
 import { validateEstimateInput, type EstimateInput } from '@/lib/validations'
 
 const getClientIp = (request: NextRequest) => {
@@ -39,17 +39,16 @@ const rateLimitCheck = (ip: string) => {
   return { ok: true }
 }
 
-const buildProjectSummary = (input: EstimateInput) => {
-  const areaSummary = input.areas
-    .map((area, index) => {
-      const type = area.type
-      const sqft = area.sqft
-      const material = area.material || 'N/A'
-      return `Area ${index + 1}: ${type}, ${sqft} sqft, ${material}`
-    })
-    .join(' | ')
+const getBaseUrl = () => {
+  if (process.env.PUBLIC_BASE_URL) {
+    return process.env.PUBLIC_BASE_URL
+  }
 
-  return areaSummary || 'Project details provided.'
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+
+  return ''
 }
 
 export async function POST(request: NextRequest) {
@@ -75,20 +74,45 @@ export async function POST(request: NextRequest) {
 
     const estimateId = await saveEstimateRequest(payload, range)
 
-    const emailResult = await sendEstimateEmail({
+    const publicBaseUrl = getBaseUrl()
+    const firestoreProjectId = process.env.FIREBASE_PROJECT_ID
+    const publicEstimateUrl = publicBaseUrl ? `${publicBaseUrl}/estimate/${estimateId}` : ''
+    const firestoreUrl = firestoreProjectId
+      ? `https://console.firebase.google.com/project/${firestoreProjectId}/firestore/databases/-default-/data/~2FestimateRequests~2F${estimateId}`
+      : ''
+
+    const internalEmailResult = await sendInternalEstimateEmail({
+      estimateId,
+      input: payload,
+      range,
+      breakdown,
+      publicUrl: publicEstimateUrl,
+      firestoreUrl,
+    })
+
+    if (!internalEmailResult.ok) {
+      console.error('Internal estimate email failed:', internalEmailResult.error)
+    }
+
+    const clientEmailResult = await sendClientEstimateEmail({
       to: payload.email,
       name: payload.clientName,
       range,
-      projectSummary: buildProjectSummary(payload),
     })
+
+    if (!clientEmailResult.ok) {
+      console.error('Client estimate email failed:', clientEmailResult.error)
+    }
 
     return NextResponse.json({
       id: estimateId,
       range,
       breakdown,
       disclaimer: ESTIMATE_DISCLAIMER,
-      emailSent: emailResult.ok,
-      emailError: emailResult.ok ? null : emailResult.error,
+      emailSent: clientEmailResult.ok,
+      emailError: clientEmailResult.ok ? null : clientEmailResult.error,
+      internalEmailSent: internalEmailResult.ok,
+      internalEmailError: internalEmailResult.ok ? null : internalEmailResult.error,
     })
   } catch (error) {
     console.error('Estimate submission failed:', error)
