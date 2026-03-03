@@ -87,6 +87,16 @@ export default async function EstimateResultPage(
               <RangeResult range={`${formatCurrency(snapshot.low)} – ${formatCurrency(snapshot.high)}`} />
             </Card>
 
+            <div className="mt-8 rounded-lg border border-yellow-300 bg-yellow-50 p-6 text-center">
+              <p className="text-xl font-semibold">
+                We have sent your estimate details by email.
+              </p>
+              <p className="mt-3 text-base">
+                If you do not see it within a few minutes,
+                please check your Spam or Junk folder.
+              </p>
+            </div>
+
             <Disclaimer>
               This is a preliminary labor-only estimate. We will follow up to confirm details.
             </Disclaimer>
