@@ -107,6 +107,13 @@ const HomePage = () => {
                 View Portfolio
               </Link>
 
+              <Link
+                href="/book"
+                className="border border-brand-accent text-brand-accent px-9 py-4 rounded-full font-semibold hover:bg-brand-accent hover:text-brand-charcoal transition"
+              >
+                View the Book
+              </Link>
+
             </div>
           </div>
         </div>
