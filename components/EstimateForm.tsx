@@ -625,6 +625,15 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                         {...register(`areas.${index}.extras.niches` as const, {
                           min: { value: 0, message: 'Niche count cannot be negative.' },
                           valueAsNumber: true,
+                          setValueAs: (value) => {
+                            if (value === '' || value == null) {
+                              return 0
+                            }
+                            if (typeof value === 'string') {
+                              return Number(value.replace(',', '.'))
+                            }
+                            return Number(value)
+                          },
                         })}
                         placeholder="0"
                       />
