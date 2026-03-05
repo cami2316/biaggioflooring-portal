@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 import { calculateLaborRange } from '@/lib/pricing'
 import { emailRegex, phoneRegex, type AreaType, type EstimateInput } from '@/lib/validations'
@@ -67,6 +67,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     trigger,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<EstimateFormValues>({
     defaultValues: {
       clientName: '',
@@ -505,24 +506,29 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
 
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Square Footage</label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      {...register(`areas.${index}.sqft` as const, {
+                    <Controller
+                      control={control}
+                      name={`areas.${index}.sqft` as const}
+                      rules={{
                         min: { value: 0, message: 'Square footage must be 0 or greater.' },
-                        valueAsNumber: true,
-                        setValueAs: (value) => {
-                          if (value === '' || value == null) {
-                            return 0
-                          }
-                          if (typeof value === 'string') {
-                            return Number(value.replace(',', '.'))
-                          }
-                          return Number(value)
-                        },
-                      })}
-                      placeholder="0"
+                      }}
+                      render={({ field }) => (
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={Number.isFinite(field.value) ? String(field.value) : ''}
+                          onChange={(event) => {
+                            const raw = event.target.value
+                            const next = raw === '' || raw == null
+                              ? 0
+                              : Number(String(raw).replace(',', '.'))
+                            field.onChange(Number.isFinite(next) ? next : 0)
+                          }}
+                          onBlur={field.onBlur}
+                          placeholder="0"
+                        />
+                      )}
                     />
                     {errors.areas?.[index]?.sqft ? (
                       <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.sqft?.message}</p>
