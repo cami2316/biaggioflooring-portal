@@ -157,14 +157,15 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       const label = `Area ${index + 1}`
       const sqft = Number(area.sqft)
       if (!Number.isFinite(sqft)) {
-        missing.push(`${label}: sqft must be a number.`)
+        missing.push(`${label}: sqft must be a number (current: ${String(area.sqft)}).`)
         return
       }
       if (sqft < 0) {
-        missing.push(`${label}: sqft must be 0 or greater.`)
+        missing.push(`${label}: sqft must be 0 or greater (current: ${sqft}).`)
         return
       }
       if (sqft <= 0) {
+        missing.push(`${label}: sqft must be > 0 (current: ${sqft}).`)
         return
       }
 
