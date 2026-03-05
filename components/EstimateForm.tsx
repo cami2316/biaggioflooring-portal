@@ -125,6 +125,12 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       }
       return Boolean(area.material?.trim())
     })
+    const detailsReady = areas.every((area) => {
+      if (Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.tileSize?.trim()) && Boolean(area.layout?.trim())
+    })
     const showerReady = areas.every((area) => {
       if (area.type !== 'shower' || Number(area.sqft) <= 0) {
         return true
@@ -132,7 +138,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return Boolean(area.surface) && Boolean(area.showerType)
     })
 
-    return hasPositive && allNonNegative && materialsReady && showerReady
+    return hasPositive && allNonNegative && materialsReady && detailsReady && showerReady
   }, [areas])
 
   useEffect(() => {
@@ -170,6 +176,12 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       }
       return Boolean(area.material?.trim())
     })
+    const detailsReady = areas.every((area) => {
+      if (Number(area.sqft) <= 0) {
+        return true
+      }
+      return Boolean(area.tileSize?.trim()) && Boolean(area.layout?.trim())
+    })
     const showerReady = areas.every((area) => {
       if (area.type !== 'shower' || Number(area.sqft) <= 0) {
         return true
@@ -177,7 +189,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       return Boolean(area.surface) && Boolean(area.showerType)
     })
 
-    return hasPositive && allNonNegative && materialsReady && showerReady
+    return hasPositive && allNonNegative && materialsReady && detailsReady && showerReady
   }, [areas])
 
   const handleNext = async () => {
@@ -507,7 +519,11 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
 
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Tile Size</label>
-                    <Select {...register(`areas.${index}.tileSize` as const)}>
+                    <Select
+                      {...register(`areas.${index}.tileSize` as const, {
+                        required: 'Select a tile size.',
+                      })}
+                    >
                       <option value="">Select size</option>
                       <option value="12x12">12" x 12"</option>
                       <option value="12x24">12" x 24"</option>
@@ -526,12 +542,17 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                       <option value="48x48">48" x 48" (Large Format)</option>
                       <option value="other">Other (please specify in notes)</option>
                     </Select>
+                    {errors.areas?.[index]?.tileSize ? (
+                      <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.tileSize?.message}</p>
+                    ) : null}
                   </div>
 
                   <div>
                     <label className="block text-sm font-semibold text-brand-charcoal mb-2">Layout</label>
                     <Select
-                      {...register(`areas.${index}.layout` as const)}
+                      {...register(`areas.${index}.layout` as const, {
+                        required: 'Select a layout.',
+                      })}
                     >
                       <option value="">Select layout</option>
                       <option value="diagonal">Diagonal Lay</option>

@@ -94,6 +94,14 @@ export const validateEstimateInput = (data: EstimateInput) => {
         addAreaError(errors, index, 'material', 'Material is required.')
       }
 
+      if (!area.tileSize?.trim()) {
+        addAreaError(errors, index, 'tileSize', 'Tile size is required.')
+      }
+
+      if (!area.layout?.trim()) {
+        addAreaError(errors, index, 'layout', 'Layout is required.')
+      }
+
       if (area.type === 'shower') {
         if (!area.surface) {
           addAreaError(errors, index, 'surface', 'Shower surface is required.')
