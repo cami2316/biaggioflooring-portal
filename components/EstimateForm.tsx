@@ -598,50 +598,52 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                     </label>
                   </div>
 
-                  <div className="space-y-4">
-                    <p className="text-sm font-semibold text-brand-charcoal">Shower Extras</p>
-                    <label className="flex items-center gap-3 text-sm text-brand-charcoal">
-                      <input
-                        type="checkbox"
-                        {...register(`areas.${index}.extras.bench` as const)}
-                        className="h-4 w-4"
-                      />
-                      Shower Bench
-                    </label>
-                    <label className="flex items-center gap-3 text-sm text-brand-charcoal">
-                      <input
-                        type="checkbox"
-                        {...register(`areas.${index}.extras.window` as const)}
-                        className="h-4 w-4"
-                      />
-                      Window
-                    </label>
-                    <div>
-                      <label className="block text-sm font-semibold text-brand-charcoal mb-2">Niches</label>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="1"
-                        {...register(`areas.${index}.extras.niches` as const, {
-                          min: { value: 0, message: 'Niche count cannot be negative.' },
-                          valueAsNumber: true,
-                          setValueAs: (value) => {
-                            if (value === '' || value == null) {
-                              return 0
-                            }
-                            if (typeof value === 'string') {
-                              return Number(value.replace(',', '.'))
-                            }
-                            return Number(value)
-                          },
-                        })}
-                        placeholder="0"
-                      />
-                      {errors.areas?.[index]?.extras?.niches ? (
-                        <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.extras?.niches?.message}</p>
-                      ) : null}
+                  {areas[index]?.type === 'shower' ? (
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold text-brand-charcoal">Shower Extras</p>
+                      <label className="flex items-center gap-3 text-sm text-brand-charcoal">
+                        <input
+                          type="checkbox"
+                          {...register(`areas.${index}.extras.bench` as const)}
+                          className="h-4 w-4"
+                        />
+                        Shower Bench
+                      </label>
+                      <label className="flex items-center gap-3 text-sm text-brand-charcoal">
+                        <input
+                          type="checkbox"
+                          {...register(`areas.${index}.extras.window` as const)}
+                          className="h-4 w-4"
+                        />
+                        Window
+                      </label>
+                      <div>
+                        <label className="block text-sm font-semibold text-brand-charcoal mb-2">Niches</label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1"
+                          {...register(`areas.${index}.extras.niches` as const, {
+                            min: { value: 0, message: 'Niche count cannot be negative.' },
+                            valueAsNumber: true,
+                            setValueAs: (value) => {
+                              if (value === '' || value == null) {
+                                return 0
+                              }
+                              if (typeof value === 'string') {
+                                return Number(value.replace(',', '.'))
+                              }
+                              return Number(value)
+                            },
+                          })}
+                          placeholder="0"
+                        />
+                        {errors.areas?.[index]?.extras?.niches ? (
+                          <p className="mt-2 text-sm text-red-600">{errors.areas[index]?.extras?.niches?.message}</p>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
                 </div>
               </Card>
             ))}
