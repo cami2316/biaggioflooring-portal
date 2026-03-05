@@ -11,20 +11,17 @@ const adminUIDs = [
   '3SJs6CHsa7aBi1rmnYYpEDBFhS23',
 ]
 
-async function setAdmins() {
+async function applyAdminClaims() {
   for (const uid of adminUIDs) {
-    await admin.auth().setCustomUserClaims(uid, {
-      role: 'admin',
-      admin: true,
-    })
-    console.log('Admin claim added to:', uid)
+    await admin.auth().setCustomUserClaims(uid, { admin: true })
+    console.log('Admin claim applied to:', uid)
   }
 
-  console.log('All admin claims applied successfully')
+  console.log('All admin claims successfully applied')
   process.exit(0)
 }
 
-setAdmins().catch((error) => {
+applyAdminClaims().catch((error) => {
   console.error('Failed to set admin claims:', error)
   process.exit(1)
 })

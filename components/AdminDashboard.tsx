@@ -121,7 +121,7 @@ const AdminDashboard = () => {
       }
 
       const token = await getIdTokenResult(nextUser)
-      setIsAdmin(token.claims.role === 'admin')
+      setIsAdmin(token.claims.admin === true)
     })
 
     return () => unsubscribe()

@@ -34,7 +34,8 @@ const AuthForm = () => {
 
       setUserEmail(user.email)
       const token = await getIdTokenResult(user)
-      setIsAdmin(token.claims.role === 'admin')
+      console.log('Firebase claims:', token.claims)
+      setIsAdmin(token.claims.admin === true)
     })
 
     return () => unsubscribe()

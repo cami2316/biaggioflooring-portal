@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = await adminAuth.verifyIdToken(idToken)
-    if (decoded.role !== 'admin') {
+    if (decoded.admin !== true) {
       return NextResponse.json({ error: 'Not authorized.' }, { status: 403 })
     }
 
