@@ -141,6 +141,55 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     return hasPositive && allNonNegative && materialsReady && detailsReady && showerReady
   }, [areas])
 
+  const estimateMissing = useMemo(() => {
+    if (!areas.length) {
+      return ['Add at least one area.']
+    }
+
+    const missing: string[] = []
+
+    const hasPositive = areas.some((area) => Number.isFinite(Number(area.sqft)) && Number(area.sqft) > 0)
+    if (!hasPositive) {
+      missing.push('At least one area must have sqft > 0.')
+    }
+
+    areas.forEach((area, index) => {
+      const label = `Area ${index + 1}`
+      const sqft = Number(area.sqft)
+      if (!Number.isFinite(sqft)) {
+        missing.push(`${label}: sqft must be a number.`)
+        return
+      }
+      if (sqft < 0) {
+        missing.push(`${label}: sqft must be 0 or greater.`)
+        return
+      }
+      if (sqft <= 0) {
+        return
+      }
+
+      if (!area.material?.trim()) {
+        missing.push(`${label}: select material.`)
+      }
+      if (!area.tileSize?.trim()) {
+        missing.push(`${label}: select tile size.`)
+      }
+      if (!area.layout?.trim()) {
+        missing.push(`${label}: select layout.`)
+      }
+      if (area.type === 'shower') {
+        if (!area.surface) {
+          missing.push(`${label}: select shower surface.`)
+        }
+        if (!area.showerType) {
+          missing.push(`${label}: select shower type.`)
+        }
+      }
+    })
+
+    return missing
+  }, [areas])
+
   useEffect(() => {
     setIsCalculating(true)
     const timer = window.setTimeout(() => setIsCalculating(false), 200)
@@ -676,7 +725,16 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
                 <RangeResult range={`${formatCurrency(estimate.min)} – ${formatCurrency(estimate.max)}`} />
               </div>
             ) : (
-              <Alert>Complete all required fields to see your estimate.</Alert>
+              <Alert>
+                Complete all required fields to see your estimate.
+                {estimateMissing.length ? (
+                  <ul className="mt-3 list-disc pl-6 text-sm">
+                    {estimateMissing.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </Alert>
             )}
 
             <Disclaimer>
