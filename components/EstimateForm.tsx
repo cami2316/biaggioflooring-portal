@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
 
 import { calculateLaborRange } from '@/lib/pricing'
 import { emailRegex, phoneRegex, type AreaType, type EstimateInput } from '@/lib/validations'
@@ -63,11 +63,9 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     register,
     handleSubmit,
     control,
-    watch,
     trigger,
     formState: { errors },
     reset,
-    setValue,
   } = useForm<EstimateFormValues>({
     defaultValues: {
       clientName: '',
@@ -90,24 +88,24 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     }
   }, [append, fields.length])
 
-  const areas = watch('areas')
-  const clientName = watch('clientName')
-  const email = watch('email')
-  const phone = watch('phone')
-  const address = watch('address')
+  const areas = useWatch({ control, name: 'areas' }) ?? []
+  const clientName = useWatch({ control, name: 'clientName' }) ?? ''
+  const email = useWatch({ control, name: 'email' }) ?? ''
+  const phone = useWatch({ control, name: 'phone' }) ?? ''
+  const address = useWatch({ control, name: 'address' }) ?? ''
   const hasZeroSqftArea = areas.some((area) => Number(area.sqft) <= 0)
-  const estimate = useMemo(() => calculateLaborRange({
+  const estimate = calculateLaborRange({
     clientName,
     email,
     phone,
     address,
     areas,
-  }), [clientName, email, phone, address, areas])
+  })
   const hasAtLeastOneValidArea = areas.some((area) => {
     const sqft = Number(area.sqft)
     return Number.isFinite(sqft) && sqft > 0
   })
-  const isEstimateReady = useMemo(() => {
+  const isEstimateReady = (() => {
     if (!areas.length) {
       return false
     }
@@ -140,9 +138,9 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     })
 
     return hasPositive && allNonNegative && materialsReady && detailsReady && showerReady
-  }, [areas])
+  })()
 
-  const estimateMissing = useMemo(() => {
+  const estimateMissing = (() => {
     if (!areas.length) {
       return ['Add at least one area.']
     }
@@ -190,7 +188,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     })
 
     return missing
-  }, [areas])
+  })()
 
   useEffect(() => {
     setIsCalculating(true)
@@ -198,7 +196,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     return () => window.clearTimeout(timer)
   }, [areas])
 
-  const step0Valid = useMemo(() => {
+  const step0Valid = (() => {
     const sanitizedPhone = phone.replace(/\D/g, '')
     return Boolean(
       clientName.trim() &&
@@ -206,9 +204,9 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
       phoneRegex.test(sanitizedPhone) &&
       address.trim()
     )
-  }, [clientName, email, phone, address])
+  })()
 
-  const step1Valid = useMemo(() => {
+  const step1Valid = (() => {
     if (!areas.length) {
       return false
     }
@@ -241,7 +239,7 @@ const EstimateForm = ({ redirectBase = '/estimate' }: EstimateFormProps) => {
     })
 
     return hasPositive && allNonNegative && materialsReady && detailsReady && showerReady
-  }, [areas])
+  })()
 
   const handleNext = async () => {
     setStatus(null)
