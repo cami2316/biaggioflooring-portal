@@ -65,7 +65,7 @@ export default function BookPage() {
 
           <div className="mt-10">
             <a
-              href="https://www.amazon.com/Master-Flooring-Installation-United-States-ebook/dp/B0FWZVT1T8"
+              href="https://www.amazon.com/dp/B0FWZVT1T8?ref_=cm_sw_r_ffobk_cp_ud_dp_F0TXHY288NGS0RAP5CBS_1&bestFormat=true"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-brand-primary px-8 py-4 text-lg font-semibold text-white hover:bg-brand-accent transition-colors"
