@@ -90,6 +90,14 @@ const statusOptions = [
   { value: 'closed', label: 'Closed' },
 ]
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
 const AdminDashboard = () => {
   const [user, setUser] = useState<User | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -249,11 +257,112 @@ const AdminDashboard = () => {
     }
   }
 
+  const handleExportPdf = () => {
+    if (!estimates.length) {
+      setError('No estimates available to export.')
+      return
+    }
+
+    const rows = estimates.map((estimate) => {
+      const areas = (estimate.areas ?? []).map((area, index) => {
+        const extras = [
+          area.extras?.demolition ? 'Demolition' : null,
+          area.extras?.cementBoard ? 'Cement Board' : null,
+          area.extras?.bench ? 'Bench' : null,
+          area.extras?.window ? 'Window' : null,
+          Number.isFinite(area.extras?.niches) && (area.extras?.niches ?? 0) > 0
+            ? `Niches: ${area.extras?.niches}`
+            : null,
+        ].filter(Boolean)
+
+        return [
+          `Area ${index + 1}`,
+          `Type: ${area.type ?? 'N/A'}`,
+          `Sqft: ${area.sqft ?? 0}`,
+          `Material: ${area.material ?? 'N/A'}`,
+          `Tile Size: ${area.tileSize ?? 'N/A'}`,
+          `Layout: ${area.layout ?? 'N/A'}`,
+          `Extras: ${extras.length ? extras.join(', ') : 'None'}`,
+        ].join(' | ')
+      }).join('<br />')
+
+      return `
+        <tr>
+          <td>${escapeHtml(estimate.clientName)}</td>
+          <td>${escapeHtml(estimate.email)}</td>
+          <td>${escapeHtml(estimate.phone)}</td>
+          <td>${escapeHtml(estimate.address)}</td>
+          <td>${escapeHtml(formatDate(estimate.createdAt))}</td>
+          <td>${escapeHtml(estimate.status)}</td>
+          <td>${escapeHtml(formatCurrency(estimate.estimatedLow))} - ${escapeHtml(formatCurrency(estimate.estimatedHigh))}</td>
+          <td>${areas || 'N/A'}</td>
+          <td>${escapeHtml(pendingNotes[estimate.id] ?? estimate.notes ?? '')}</td>
+        </tr>
+      `
+    }).join('')
+
+    const html = `
+      <!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Estimate Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #1f2937; padding: 24px; }
+            h1 { font-size: 20px; margin: 0 0 6px; }
+            p { margin: 0 0 16px; font-size: 12px; color: #6b7280; }
+            table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            th, td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: top; }
+            th { background: #f9fafb; text-align: left; }
+            tr:nth-child(even) { background: #f3f4f6; }
+            .meta { margin-bottom: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="meta">
+            <h1>Biaggio Flooring - Estimate Report</h1>
+            <p>Generated: ${new Date().toLocaleString('en-US')}</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Range</th>
+                <th>Areas</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `
+
+    const popup = window.open('', '_blank', 'width=1200,height=800')
+    if (!popup) {
+      setError('Unable to open report window. Please allow popups and try again.')
+      return
+    }
+
+    popup.document.open()
+    popup.document.write(html)
+    popup.document.close()
+    popup.focus()
+    popup.print()
+  }
+
   return (
     <div className="space-y-6">
       <Card className="p-6">
         <p className="text-sm uppercase tracking-widest text-brand-charcoal/60 mb-2">Estimate Summary</p>
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <p className="text-2xl font-semibold text-brand-charcoal">{summary.total}</p>
             <p className="text-sm text-brand-charcoal/70">Total Requests</p>
@@ -262,6 +371,9 @@ const AdminDashboard = () => {
             <p className="text-2xl font-semibold text-brand-charcoal">{summary.newCount}</p>
             <p className="text-sm text-brand-charcoal/70">New Requests</p>
           </div>
+          <Button type="button" variant="secondary" onClick={handleExportPdf}>
+            Export PDF Report
+          </Button>
         </div>
       </Card>
 
