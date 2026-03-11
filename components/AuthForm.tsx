@@ -33,6 +33,7 @@ const AuthForm = () => {
       }
 
       setUserEmail(user.email)
+      console.log('Firebase project:', auth.app.options.projectId)
       const token = await getIdTokenResult(user)
       console.log('Firebase claims:', token.claims)
       setIsAdmin(token.claims.admin === true)
@@ -48,6 +49,10 @@ const AuthForm = () => {
 
     try {
       const credential = await signInWithEmailAndPassword(auth, email.trim(), password)
+      const tokenResult = await getIdTokenResult(credential.user, true)
+      if (tokenResult.claims.admin !== true) {
+        throw new Error('User is not an admin.')
+      }
       const idToken = await getIdToken(credential.user, true)
 
       const response = await fetch('/api/session/login', {
@@ -57,7 +62,9 @@ const AuthForm = () => {
       })
 
       if (!response.ok) {
-        setStatus('Sign-in failed. Admin access is required.')
+        const payload = await response.json().catch(() => null)
+        const message = payload?.error || `Sign-in failed (status ${response.status}).`
+        setStatus(message)
         return
       }
 
@@ -66,8 +73,9 @@ const AuthForm = () => {
       setStatus('Signed in successfully.')
       router.push('/admin/dashboard')
     } catch (error) {
-      console.error('Auth sign-in failed:', error)
-      setStatus('Sign-in failed. Check your credentials and try again.')
+      console.error('Firebase login error:', error)
+      const message = error instanceof Error ? error.message : 'Authentication failed.'
+      setStatus(message)
     } finally {
       setIsSubmitting(false)
     }
