@@ -119,6 +119,15 @@ const AuthForm = () => {
           <p className="text-sm text-brand-charcoal/70">
             Admin access: {isAdmin ? 'Enabled' : 'Not enabled'}
           </p>
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={() => router.push('/admin/dashboard')}
+              className="rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-brand-accent transition"
+            >
+              Open Dashboard
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={handleSignOut}
