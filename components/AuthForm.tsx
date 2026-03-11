@@ -81,6 +81,49 @@ const AuthForm = () => {
     }
   }
 
+  const handleOpenDashboard = async () => {
+    setStatus(null)
+    setIsSubmitting(true)
+
+    try {
+      const currentUser = auth.currentUser
+      if (!currentUser) {
+        setStatus('Please sign in again to continue.')
+        return
+      }
+
+      const tokenResult = await getIdTokenResult(currentUser, true)
+      if (tokenResult.claims.admin !== true) {
+        setStatus('Admin access is not enabled for this account.')
+        return
+      }
+
+      const idToken = await getIdToken(currentUser, true)
+      const response = await fetch('/api/session/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        const message = payload?.error || `Sign-in failed (status ${response.status}).`
+        setStatus(message)
+        return
+      }
+
+      const payload = await response.json().catch(() => ({}))
+      setCsrfToken(payload?.csrfToken ?? null)
+      router.push('/admin/dashboard')
+    } catch (error) {
+      console.error('Admin session login failed:', error)
+      const message = error instanceof Error ? error.message : 'Authentication failed.'
+      setStatus(message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const handleSignOut = async () => {
     setStatus(null)
     try {
@@ -122,10 +165,11 @@ const AuthForm = () => {
           {isAdmin ? (
             <button
               type="button"
-              onClick={() => router.push('/admin/dashboard')}
-              className="rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-brand-accent transition"
+              onClick={handleOpenDashboard}
+              disabled={isSubmitting}
+              className="rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-brand-accent transition disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Open Dashboard
+              {isSubmitting ? 'Opening...' : 'Open Dashboard'}
             </button>
           ) : null}
           <button
