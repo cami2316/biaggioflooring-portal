@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Source_Sans_3 } from 'next/font/google'
 import './globals.css'
 
@@ -18,7 +18,13 @@ const bodyFont = Source_Sans_3({
   weight: ['400', '500', '600'],
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://biaggioflooring.com'),
   title: 'Project Estimate | Biaggio-style',
 
   description:
@@ -56,10 +62,6 @@ export const metadata: Metadata = {
     },
   },
 
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
 }
 
 export default function RootLayout({
