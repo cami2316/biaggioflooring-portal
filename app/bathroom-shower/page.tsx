@@ -118,6 +118,45 @@ export default function BathroomShower() {
         </div>
       </section>
 
+      {/* SHOWER & BATH GALLERY */}
+      <section className="py-20 bg-brand-white">
+        <div className="container mx-auto px-4">
+
+          <div className="text-center mb-14">
+            <p className="uppercase tracking-[0.35em] text-brand-charcoal mb-3">
+              Gallery
+            </p>
+
+            <h2 className="text-3xl md:text-4xl font-semibold text-brand-charcoal">
+              Showers & Bathrooms We've Built
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { src: '/images/portfolio/shower-rainhead-hex-niche.jpg', alt: 'Rainhead shower with hexagon tile niche' },
+              { src: '/images/portfolio/shower-navy-subway-niche.jpg', alt: 'Navy subway tile shower with niche' },
+              { src: '/images/portfolio/shower-gold-star-mosaic-niche.jpg', alt: 'Shower niche with gold star mosaic accent' },
+              { src: '/images/portfolio/shower-two-tone-tile-pebble-floor.jpg', alt: 'Two-tone tile shower with pebble floor' },
+              { src: '/images/portfolio/shower-marble-with-window-niche.jpg', alt: 'Marble shower with window and niche' },
+              { src: '/images/portfolio/shower-pebble-stone-floor.jpg', alt: 'Shower with natural pebble stone floor' },
+              { src: '/images/portfolio/bathroom-geometric-mosaic-corner-niche.jpg', alt: 'Bathroom with geometric mosaic corner niche' },
+              { src: '/images/portfolio/shower-marble-herringbone-gold-accent.jpg', alt: 'Marble herringbone shower with gold accent trim' },
+            ].map((photo) => (
+              <div key={photo.src} className="group relative h-40 md:h-48 rounded-2xl overflow-hidden shadow-md">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
       {/* TRUST SECTION */}
       <section className="py-20 bg-brand-white">
         <div className="container mx-auto px-4 text-center">

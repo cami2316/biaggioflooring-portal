@@ -31,6 +31,27 @@ const serviceHighlights = [
     image: '/images/bathrooms/bath04.jpg',
     alt: 'Custom tile installation with premium finish',
   },
+  {
+    title: 'Kitchen Renovations',
+    description:
+      'Cabinetry, countertops, and backsplashes finished with the same precision as every remodel.',
+    image: '/images/portfolio/kitchen-cabinets-granite.jpg',
+    alt: 'Kitchen renovation with granite countertops and custom cabinetry',
+  },
+  {
+    title: 'Custom Showers',
+    description:
+      'Frameless glass, niches, and precision waterproofing built for durability and style.',
+    image: '/images/portfolio/shower-frameless-glass-gray-tile.jpg',
+    alt: 'Frameless glass shower with gray tile installation',
+  },
+  {
+    title: 'Statement Features',
+    description:
+      'Fireplace surrounds, feature walls, and architectural details that define a room.',
+    image: '/images/portfolio/fireplace-travertine-surround.jpg',
+    alt: 'Travertine fireplace surround installation',
+  },
 ]
 
 const portfolioPreview = [
@@ -45,6 +66,18 @@ const portfolioPreview = [
   {
     title: 'Tile Accent Feature',
     image: '/images/projects/bath03.jpg',
+  },
+  {
+    title: 'Kitchen Backsplash Detail',
+    image: '/images/portfolio/kitchen-hex-backsplash-marble.jpg',
+  },
+  {
+    title: 'Grand Entry Staircase',
+    image: '/images/portfolio/entry-marble-tile-curved-steps.jpg',
+  },
+  {
+    title: 'Vaulted Living Space',
+    image: '/images/portfolio/vaulted-ceiling-marble-floor-room.jpg',
   },
 ]
 

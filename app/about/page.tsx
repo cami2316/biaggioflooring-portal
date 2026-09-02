@@ -151,6 +151,47 @@ export default function About() {
 
       </section>
 
+      {/* WORK GALLERY */}
+      <section className="py-20 bg-brand-white">
+
+        <div className="container mx-auto px-4">
+
+          <div className="text-center mb-14">
+            <p className="uppercase tracking-[0.35em] text-brand-charcoal text-sm mb-3">
+              Our Work
+            </p>
+
+            <h2 className="text-3xl md:text-4xl font-semibold text-brand-charcoal">
+              Craftsmanship Across Central Florida
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { src: '/images/portfolio/bathroom-glass-hex-backsplash-vanity.jpg', alt: 'Glass hex tile vanity backsplash' },
+              { src: '/images/portfolio/kitchen-backsplash-brick-tile-2.jpg', alt: 'Kitchen with brick-pattern tile backsplash' },
+              { src: '/images/bathrooms/bath.jpg', alt: 'Modern bathroom remodel with custom tile' },
+              { src: '/images/portfolio/shower-gray-tile-linear-drain.jpg', alt: 'Gray tile shower with linear drain' },
+              { src: '/images/portfolio/kitchen-backsplash-branded-logo.jpg', alt: 'Kitchen tile backsplash detail' },
+              { src: '/images/portfolio/kitchen-hexagon-backsplash-outlet.jpg', alt: 'Hexagon tile kitchen backsplash' },
+              { src: '/images/bathrooms/bath04.jpg', alt: 'Custom tile installation with premium finish' },
+              { src: '/images/portfolio/bathroom-dual-shower-freestanding-tub.jpg', alt: 'Dual shower with freestanding tub' },
+            ].map((photo) => (
+              <div key={photo.src} className="group relative h-40 md:h-48 rounded-2xl overflow-hidden shadow-md">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+      </section>
+
       {/* STATS */}
       <section className="py-20 bg-brand-charcoal text-white">
 
