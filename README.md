@@ -83,3 +83,8 @@ Replace image placeholders in the `public/images` directory with actual project 
 ## License
 
 © 2026 Biaggio Flooring. All rights reserved.
+
+## Deploy notes (2026-09-02)
+- Supabase env vars (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) configured in Vercel.
+- ICS_SECRET / NEXT_PUBLIC_ICS_TOKEN configured for the calendar feed.
+- Triggering redeploy to verify the build succeeds.
