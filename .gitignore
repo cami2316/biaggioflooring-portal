@@ -28,6 +28,11 @@ yarn-error.log*
 
 # Firebase Admin SDK keys
 biaggioflooring-firebase-adminsdk-*.json
+migration/google-service-account.json
+
+# Migration artifacts
+migration/invoices_data_full.json
+migration/extract_report.txt
 
 # Vercel
 .vercel
