@@ -90,3 +90,4 @@ Replace image placeholders in the `public/images` directory with actual project 
 - Triggering redeploy to verify the build succeeds.
 
 <!-- redeploy trigger 2026-09-02T12:06:47Z -->
+<!-- redeploy trigger 2026-09-02T12:14:03Z -->
