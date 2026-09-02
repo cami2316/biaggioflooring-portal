@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 interface GalleryItem {
   id: number
   title: string
-  category: 'Flooring' | 'Bathrooms' | 'Projects'
+  category: 'Flooring' | 'Bathrooms' | 'Kitchen' | 'Projects'
   imageSrc: string
   alt: string
 }

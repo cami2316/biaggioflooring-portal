@@ -10,8 +10,8 @@ export default function Footer() {
 
         <div className="relative h-[420px] overflow-hidden">
           <Image
-            src="/images/projects/floor1.jpg"
-            alt="Luxury flooring installation"
+            src="/images/portfolio/shower-black-hex-mosaic.jpg"
+            alt="Luxury flooring and tile installation"
             fill
             className="object-cover scale-105"
             sizes="100vw"
