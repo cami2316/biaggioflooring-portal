@@ -12,6 +12,7 @@ module.exports = {
           primary: '#46C038',
           accent: '#4FF233',
           charcoal: '#212121',
+          slate: '#3A3A3A',
           black: '#000000',
           white: '#FFFFFF',
         },

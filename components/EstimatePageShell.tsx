@@ -18,7 +18,7 @@ const EstimatePageShell = ({
 }: EstimatePageShellProps) => {
   return (
     <>
-      <section className="relative py-20 sm:py-28 bg-brand-charcoal text-white overflow-hidden">
+      <section className="relative py-20 sm:py-28 bg-brand-slate text-white overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/images/projects/bath03.jpg"
@@ -26,7 +26,7 @@ const EstimatePageShell = ({
             fill
             className="object-cover scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/90 via-brand-charcoal/70 to-brand-charcoal/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/70 via-brand-slate/45 to-brand-slate/70" />
         </div>
 
         <div className="relative container mx-auto px-4 max-w-3xl">

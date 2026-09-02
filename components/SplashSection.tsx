@@ -48,7 +48,7 @@ export default function SplashSection({
           className="object-cover"
           style={{ transform: `translateY(${offset}px)` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/80 via-brand-charcoal/60 to-brand-charcoal/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/60 via-brand-slate/35 to-brand-slate/60" />
       </div>
       <div className="absolute inset-0 flex items-center">
         <div className="container mx-auto px-4">

@@ -37,7 +37,7 @@ export default function About() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-brand-charcoal text-white py-28">
+      <section className="relative overflow-hidden bg-brand-slate text-white py-28">
 
         <div className="absolute inset-0">
           <Image
@@ -48,7 +48,7 @@ export default function About() {
             className="object-cover scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/90 via-brand-charcoal/70 to-brand-charcoal/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/70 via-brand-slate/45 to-brand-slate/70" />
         </div>
 
         <div className="relative container mx-auto px-4 max-w-3xl">
@@ -193,7 +193,7 @@ export default function About() {
       </section>
 
       {/* STATS */}
-      <section className="py-20 bg-brand-charcoal text-white">
+      <section className="py-20 bg-brand-slate text-white">
 
         <div className="container mx-auto px-4">
 

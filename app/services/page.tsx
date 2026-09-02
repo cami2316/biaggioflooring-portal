@@ -12,7 +12,7 @@ export default function Services() {
   return (
     <>
       {/* HERO */}
-      <section className="relative py-28 bg-brand-charcoal text-white overflow-hidden">
+      <section className="relative py-28 bg-brand-slate text-white overflow-hidden">
 
         <div className="absolute inset-0">
           <Image
@@ -21,7 +21,7 @@ export default function Services() {
             fill
             className="object-cover scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/90 via-brand-charcoal/70 to-brand-charcoal/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/70 via-brand-slate/45 to-brand-slate/70" />
         </div>
 
         <div className="relative container mx-auto px-4 max-w-3xl">
@@ -257,7 +257,7 @@ export default function Services() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-brand-charcoal text-white text-center">
+      <section className="py-24 bg-brand-slate text-white text-center">
         <div className="container mx-auto px-4 max-w-2xl">
 
           <h2 className="text-3xl md:text-4xl font-semibold mb-6">

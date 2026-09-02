@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-charcoal text-brand-white">
+    <footer className="bg-brand-slate text-brand-white">
 
       {/* CTA IMAGE SECTION */}
       <div className="relative">
@@ -17,7 +17,7 @@ export default function Footer() {
             sizes="100vw"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/95 via-brand-charcoal/80 to-brand-charcoal/95" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/75 via-brand-slate/50 to-brand-slate/75" />
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center text-center">

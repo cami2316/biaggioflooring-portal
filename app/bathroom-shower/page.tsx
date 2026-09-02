@@ -12,7 +12,7 @@ export default function BathroomShower() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden py-28 bg-brand-charcoal text-white">
+      <section className="relative overflow-hidden py-28 bg-brand-slate text-white">
 
         <div className="absolute inset-0">
           <Image
@@ -23,7 +23,7 @@ export default function BathroomShower() {
             className="object-cover scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/90 via-brand-charcoal/70 to-brand-charcoal/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/70 via-brand-slate/45 to-brand-slate/70" />
         </div>
 
         <div className="relative container mx-auto px-4 max-w-3xl">
@@ -202,7 +202,7 @@ export default function BathroomShower() {
       </section>
 
       {/* PROCESS SECTION */}
-      <section className="py-20 bg-brand-charcoal text-white">
+      <section className="py-20 bg-brand-slate text-white">
 
         <div className="container mx-auto px-4 max-w-5xl text-center">
 

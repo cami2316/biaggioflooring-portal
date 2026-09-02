@@ -93,7 +93,7 @@ const HomePage = () => {
   return (
     <>
       {/* HERO */}
-      <section className="relative min-h-screen overflow-hidden bg-brand-charcoal text-brand-white">
+      <section className="relative min-h-screen overflow-hidden bg-brand-slate text-brand-white">
 
         <div className="absolute inset-0">
           <Image
@@ -105,7 +105,7 @@ const HomePage = () => {
             sizes="100vw"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-charcoal/90 via-brand-charcoal/70 to-brand-charcoal/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/70 via-brand-slate/45 to-brand-slate/70" />
         </div>
 
         <div className="relative container mx-auto px-4 py-32">
